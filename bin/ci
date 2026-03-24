@@ -4,7 +4,16 @@ import sys
 from pathlib import Path
 
 repo_root = Path(__file__).resolve().parent.parent
-flow_venv = repo_root.parent.parent / ".venv" / "bin" / "python3"
+# Walk up from repo_root until we find a .venv directory
+search = repo_root
+while search != search.parent:
+    candidate = search / ".venv" / "bin" / "python3"
+    if candidate.exists():
+        flow_venv = candidate
+        break
+    search = search.parent
+else:
+    flow_venv = repo_root.parent.parent / ".venv" / "bin" / "python3"
 
 result = subprocess.run(
     [str(flow_venv), "-m", "pytest", "tests/", "-v", "--rootdir", str(repo_root)],
