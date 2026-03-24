@@ -4,7 +4,20 @@ import sys
 from pathlib import Path
 
 repo_root = Path(__file__).resolve().parent.parent
-flow_venv = repo_root.parent.parent / ".venv" / "bin" / "python3"
+
+# Walk up to find the FLOW venv — works from both main checkout and worktrees
+flow_venv = None
+current = repo_root
+while current != current.parent:
+    candidate = current / ".venv" / "bin" / "python3"
+    if candidate.exists():
+        flow_venv = candidate
+        break
+    current = current.parent
+
+if flow_venv is None:
+    print("ERROR: Could not find FLOW .venv/bin/python3", file=sys.stderr)
+    sys.exit(1)
 
 result = subprocess.run(
     [str(flow_venv), "-m", "pytest", "tests/", "-v", "--rootdir", str(repo_root)],
