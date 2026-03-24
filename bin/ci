@@ -16,7 +16,7 @@ if not venv_python.exists():
     )
 
 result = subprocess.run(
-    [str(venv_python), "-m", "pytest", "tests/", "-v"],
+    [str(venv_python), "-m", "pytest", "tests/", "-v", "--rootdir", str(repo_root)],
     cwd=str(repo_root),
 )
 sys.exit(result.returncode)
